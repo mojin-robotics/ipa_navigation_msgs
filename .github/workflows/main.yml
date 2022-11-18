@@ -3,8 +3,8 @@ name: CI
 on:
   push:
   pull_request:
-#  schedule:
-#    - cron: "0 0 * * 0" # every Sunday at midnight
+  schedule:
+    - cron: "0 0 * * 0" # every Sunday at midnight
   workflow_dispatch:
 
 jobs:
@@ -31,7 +31,7 @@ jobs:
           - { ROS_DISTRO: noetic }
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           lfs: true
           ssh-known-hosts: ''
