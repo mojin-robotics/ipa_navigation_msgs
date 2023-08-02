@@ -1,0 +1,107 @@
+# Detection action
+# This action runs until cancelled and publishes a TF
+# The expected TF tree should look like this (for a docking use-case)
+#
+#    robot---<published by detection>--TEMPLATE--<static pub by detect>--Station
+#      |   final_pose1--------<static, published by tree>---------------------|
+#      |                final_pose2--<static, published by tree>--------------|
+#      |
+#      |----------<lts>------map
+#
+# The TEMPLATE frame is optional, depending on the used detection plugin
+# If no LTS is running, there is no map frame
+
+# Selects the detector plugin to use
+# Empty means use the default detector
+# Example: "template-detection", "marker-detection"
+string detector
+
+# Station type as defined in the environment (if available)
+# TODO potentially just optional
+string station_type
+
+# This is the POI/Station we are currently approaching
+# TODO potentially just optional
+string station_name
+
+# Where the station is exptected to be
+# The detector may have to transform this to its operating frame and retransform any templates relative to this pose.
+# Supported setups:
+#   Station Guess in Map Frame (expected_station_location is in frame "map")
+#
+#        Template-<implementation defined>--------|
+#                                              Station-<expected station>--|
+#                                                                         Map
+#      Robot-----<lts>-----------------------------------------------------|
+#
+#   Station guess relative to robot (exptected_station_location is in frame "base_link")
+
+#        Template-<implementation defined>--------|
+#                                               Station
+#                                                 |
+#      Robot-----<expected station>---------------|
+#
+geometry_msgs/PoseWithCovarianceStamped exptected_station_location
+
+# JSON string of plugin-specific parameters
+string parameters
+---
+####################
+# OUTCOME DEFINITION
+####################
+
+# Predefined success codes:
+uint8 SUCCESS        = 0
+
+# Predefined general error codes:
+uint8 FAILURE        = 10
+uint8 CANCELED       = 11
+# Gap
+uint8 TF_ERROR       = 16
+uint8 INTERNAL_ERROR = 17
+# 21..49 are reserved for future general error codes
+# TODO add predefined failure cases here, like "low detection confidence", ...
+# Failure cases:
+# Multiple detections and we don't know which one
+# Template lost
+# Misconfiguration
+# Template never seen
+# No such plugin
+# ...
+
+# Outcomes below 10 are success
+uint8 outcome
+
+# Mostly for communicating failure details
+string message
+---
+#####################
+# FEEDBACK DEFINITION
+#####################
+
+# The docking behaviour tree is not supposed to act on any of these, these are purely for information
+# If the detector cannot detect anymore, it should fail the action.
+# The docking behaviour tree should only look at the outcome.
+
+# TODO: group these, maybe define ranges
+uint8 INITIALIZING = 0 # Detector is starting up, no result available yet
+uint8 DETECTED = 1 # The detector is reliably tracking the object
+uint8 PASSIVE_TRACKING = 2 # The detector is not reliably tracking the object, but can still provide a reasonable pose guess (for example odometry and kalman-filter based)
+uint8 LOW_CONFIDENCE = 3 # The detector cannot provide a reliable pose estimate
+uint8 RECOVERING = 4 # The detector is recovering
+uint8 LOST = 5 # The detector lost its reference (next tick will fail the action)
+# Reserved block for plugin specific
+
+# Valid transitions:
+# INITIALIZING -> [1, 4] -> LOST
+# Typical:
+# INITIALIZING -> DETECTED -> PASSIVE_TRACKING -> DETECTED ...
+# Failure:
+# INITIALIZING -> DETECTED -> PASSIVE_TRACKING -> LOW_CONFIDENCE -> LOST
+# "We never saw the template"
+# INITIALIZING -> (after some timeout) -> FAILED
+
+uint8 state
+
+# Optional, for information only, plugin specific, range should be in [0, 1], with 1 being best confidence
+float32 confidence
