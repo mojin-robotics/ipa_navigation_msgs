@@ -1,0 +1,7 @@
+geometry_msgs/Point32[] polygon
+geometry_msgs/PoseStamped pose
+---
+bool success
+string message
+string id
+string pose_topic

@@ -19,6 +19,10 @@ add_message_files(
     AnnotatedPath.msg
     AreaProperty.msg
     AttachedEventTrigger.msg
+    Collision.msg
+    CollisionCylinder.msg
+    CollisionSolvingDebug.msg
+    CompressedCollisions.msg
     CompressedForces.msg
     CompressedMapImage.msg
     Constraint.msg
@@ -27,21 +31,29 @@ add_message_files(
     EBand2Bubble.msg
     EBand2Metadata.msg
     EventTrigger.msg
+    FloatStamped.msg
     LTSNGScan.msg
     LTSNGStatus.msg
+    LiftState.msg
+    NavigationState.msg
     NavigationZone.msg
     NavigationZoneList.msg
+    PLCAction.msg
+    PLCActionFeedback.msg
     Point2D.msg
+    Point2DWithTime.msg
     PolygonList.msg
     RecoveryFeedback.msg
     SideProperty.msg
     StateTrajectory.msg
     StateTrajectoryPoint.msg
     TrajGenInfo.msg
+    TricycleDrive.msg
+    TricycleDriveStamped.msg
     Twist2D.msg
+    VehicleState.msg
     ZoneLease.msg
 )
-
 
 add_service_files(
   DIRECTORY srv
@@ -58,9 +70,12 @@ add_service_files(
     IsPoseOnPathSegment.srv
     LoadDiffMap.srv
     MapTransform.srv
+    PostProcessPath.srv
     SetIniPose.srv
     SetIntermediateGoal.srv
     SetMarkerArray.srv
+    SetUint8.srv
+    SpawnVirtualObstacle.srv
     SplitPath.srv
     Trace.srv
 )
@@ -73,6 +88,7 @@ add_action_files(
     MarkerDetection.action
     MonitorRepause.action
     MoveBase.action
+    NodeDetection.action
     PlanDetour.action
     TemplateDetection.action
     TrackObjectPose.action

@@ -1,0 +1,10 @@
+# Path to process
+nav_msgs/Path path
+# List of operations to apply in order
+string[] operations
+---
+# Processed path
+nav_msgs/Path path
+# List of successful operations.
+# Processor tries to run as many operations as possible and returns the list of successful operations
+string[] applied_operations
